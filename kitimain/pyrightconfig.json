@@ -1,0 +1,14 @@
+{
+  "venvPath": ".",
+  "venv": "venv",
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "basic",
+  "djangoFramework": true,
+  "reportMissingModuleSource": "none",
+  "reportMissingImports": "warning",
+  "reportAttributeAccessIssue": "warning",
+  "exclude": [
+    "**/migrations/**",
+    "**/__pycache__/**"
+  ]
+}
