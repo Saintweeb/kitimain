@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KITI ICT Department</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0d14;--bg2:#0f1320;--bg3:#141827;--bg4:#1a2035;
+  --accent:#00f5d4;--accent2:#7c3aed;--accent3:#f59e0b;
+  --green:#10b981;--red:#ef4444;--blue:#3b82f6;
+  --text:#e8eaf0;--muted:#6b7280;--border:#1e2640;
+  --card:#111827;--font:'DM Sans',sans-serif;
+  --mono:'Space Mono',monospace;--display:'Orbitron',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+/* ── Login ── */
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden}
+.login-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:50px 50px;opacity:.4}
+.login-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,#7c3aed22 0%,transparent 70%);top:-100px;right:-100px}
+.login-glow2{position:absolute;width:400px;height:400px;background:radial-gradient(circle,#00f5d422 0%,transparent 70%);bottom:-100px;left:-100px}
+.login-wrap{position:relative;z-index:10;width:100%;max-width:480px;padding:20px}
+.kiti-logo{text-align:center;margin-bottom:40px}
+.kiti-logo h1{font-family:var(--display);font-size:28px;font-weight:900;color:var(--accent);letter-spacing:3px;text-shadow:0 0 30px #00f5d466}
+.kiti-logo p{color:var(--muted);font-size:13px;letter-spacing:2px;margin-top:6px;text-transform:uppercase}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px}
+.login-card h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.login-card p{color:var(--muted);font-size:13px;margin-bottom:28px}
+.role-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.role-btn{border:1.5px solid var(--border);background:var(--bg2);border-radius:12px;padding:18px 12px;cursor:pointer;text-align:center;transition:all .25s}
+.role-btn:hover{border-color:var(--accent);transform:translateY(-2px)}
+.role-btn.selected{border-color:var(--accent);background:#00f5d410;box-shadow:0 0 20px #00f5d420}
+.role-btn .ri{font-size:32px;margin-bottom:8px}
+.role-btn span{display:block;font-weight:600;font-size:14px}
+.role-btn small{color:var(--muted);font-size:11px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-input,.form-control{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);font-family:var(--font);outline:none;transition:border .2s}
+.form-input:focus,.form-control:focus{border-color:var(--accent)}
+.form-input::placeholder,.form-control::placeholder{color:#374151}
+textarea.form-control{resize:vertical;min-height:90px}
+select.form-control{cursor:pointer}
+.btn-login{width:100%;padding:14px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);letter-spacing:.5px;transition:all .25s;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;box-shadow:0 4px 20px #7c3aed44}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 8px 30px #7c3aed66}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.login-links{display:flex;justify-content:space-between;margin-top:14px;font-size:12px}
+.login-links a{color:var(--accent);cursor:pointer;text-decoration:none}
+.login-links a:hover{text-decoration:underline}
+.alert-box{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.alert-error{background:#ef444422;border:1px solid var(--red);color:#fca5a5}
+.alert-success{background:#10b98122;border:1px solid var(--green);color:#6ee7b7}
+/* ── App Shell ── */
+#appShell{display:none;min-height:100vh;flex-direction:column}
+.topnav{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.topnav-logo{font-family:var(--display);font-size:15px;font-weight:900;color:var(--accent);letter-spacing:2px}
+.topnav-logo span{color:var(--muted);font-weight:400;font-size:12px;margin-left:8px;font-family:var(--font)}
+.topnav-tabs{display:flex;gap:2px;overflow-x:auto}
+.tnav{padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tnav:hover{color:var(--text);background:var(--bg3)}
+.tnav.active{color:var(--accent);background:#00f5d412}
+.topnav-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.notif-btn{width:36px;height:36px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative}
+.notif-badge{position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;background:var(--red);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;border:1.5px solid var(--card)}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;border:2px solid var(--accent)}
+.content-area{flex:1;padding:28px;max-width:1400px;width:100%;margin:0 auto}
+/* ── Loading ── */
+.loading-spinner{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--muted);gap:12px;font-size:14px}
+.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+/* ── Grid ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.g2-3{display:grid;grid-template-columns:1fr 1.5fr;gap:20px}
+/* ── Stats ── */
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.stat-icon{font-size:24px;margin-bottom:10px}
+.stat-val{font-size:30px;font-weight:700;line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;font-weight:500}
+/* ── Badge ── */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;gap:4px}
+.b-green{background:#10b98122;color:#34d399}.b-red{background:#ef444422;color:#f87171}
+.b-blue{background:#3b82f622;color:#60a5fa}.b-amber{background:#f59e0b22;color:#fbbf24}
+.b-purple{background:#7c3aed22;color:#a78bfa}.b-cyan{background:#00f5d422;color:#00f5d4}
+.b-gray{background:#37415122;color:#9ca3af}
+.live-pill{display:inline-flex;align-items:center;gap:5px;background:#ef444422;color:#f87171;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#ef4444;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* ── Buttons ── */
+.btn{padding:9px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);transition:all .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-primary{background:var(--accent2);color:#fff}.btn-primary:hover{background:#6d28d9}
+.btn-accent{background:var(--accent);color:#0a0d14}.btn-accent:hover{filter:brightness(1.1)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{background:var(--bg3)}
+.btn-danger{background:var(--red);color:#fff}.btn-sm{padding:5px 12px;font-size:12px}
+.btn-xs{padding:4px 9px;font-size:11px}
+.btn-success{background:var(--green);color:#fff}
+/* ── Table ── */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--bg3);padding:11px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:11px 14px;border-bottom:1px solid #1a2035;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+/* ── Progress ── */
+.progress{background:var(--bg3);border-radius:99px;height:6px;overflow:hidden}
+.progress-bar{height:100%;border-radius:99px;transition:width .4s}
+/* ── Avatar ── */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.av-sm{width:32px;height:32px;font-size:12px}.av-md{width:42px;height:42px;font-size:15px}
+.av-lg{width:60px;height:60px;font-size:20px}
+/* ── Modal ── */
+.overlay{position:fixed;inset:0;background:#00000099;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.modal-lg{max-width:720px}
+.modal-header{padding:22px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:1;border-radius:20px 20px 0 0}
+.modal-title{font-size:17px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px;line-height:1;border-radius:6px}
+.modal-close:hover{color:var(--text);background:var(--bg3)}
+.modal-body{padding:24px}
+/* ── Form ── */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* ── Misc ── */
+.empty{text-align:center;padding:48px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.module-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all .25s;cursor:pointer}
+.module-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 30px #00f5d415}
+.assign-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px}
+.rev-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;transition:all .2s;cursor:pointer}
+.rev-card:hover{border-color:var(--accent2)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#374151;border-radius:99px}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginPage">
+  <div class="login-grid"></div>
+  <div class="login-glow"></div>
+  <div class="login-glow2"></div>
+  <div class="login-wrap">
+    <div class="kiti-logo">
+      <h1>KITI</h1>
+      <p>ICT Department Portal</p>
+    </div>
+    <div class="login-card">
+      <h2>Welcome Back</h2>
+      <p>Sign in to your portal</p>
+      <div class="role-select">
+        <div class="role-btn selected" id="roleStudent" onclick="selectRole('student')">
+          <div class="ri">🎓</div><span>Student</span><small>Access your portal</small>
+        </div>
+        <div class="role-btn" id="roleLecturer" onclick="selectRole('lecturer')">
+          <div class="ri">👨‍🏫</div><span>Lecturer</span><small>Manage your classes</small>
+        </div>
+      </div>
+      <div id="loginAlert" class="alert-box alert-error"></div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="loginEmail" type="email" placeholder="alice@kiti.ac.ke" value="alice@kiti.ac.ke">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="loginPassword" type="password" placeholder="Your password" value="student1234">
+      </div>
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In →</button>
+      <div class="login-links">
+        <a onclick="showForgotPassword()">Forgot password?</a>
+        <a onclick="fillDemo()">Use demo account</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="appShell" style="display:none;flex-direction:column">
+  <nav class="topnav">
+    <div class="topnav-logo">KITI <span id="roleLabel">Portal</span></div>
+    <div class="topnav-tabs" id="topnavTabs"></div>
+    <div class="topnav-right">
+      <div class="notif-btn" onclick="loadNotifications()" id="notifBtn">🔔<div class="notif-badge" id="notifBadge" style="display:none">0</div></div>
+      <div class="avatar-btn" id="topAvatar" onclick="switchSection('profile')">?</div>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">Sign Out</button>
+    </div>
+  </nav>
+  <div class="content-area" id="contentArea">
+    <div class="loading-spinner"><div class="spinner"></div>Loading...</div>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG – change API_BASE to your Django server URL
+// ═══════════════════════════════════════════════════════════
+const API_BASE = 'http://127.0.0.1:8000/api';
+
+// ═══════════════════════════════════════════════════════════
+// TOKEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+const Auth = {
+  getAccess()  { return localStorage.getItem('kiti_access') },
+  getRefresh() { return localStorage.getItem('kiti_refresh') },
+  getUser()    { try { return JSON.parse(localStorage.getItem('kiti_user') || 'null') } catch { return null } },
+  setTokens(access, refresh, user) {
+    localStorage.setItem('kiti_access',  access);
+    localStorage.setItem('kiti_refresh', refresh);
+    localStorage.setItem('kiti_user',    JSON.stringify(user));
+  },
+  clear() {
+    localStorage.removeItem('kiti_access');
+    localStorage.removeItem('kiti_refresh');
+    localStorage.removeItem('kiti_user');
+  },
+  isLoggedIn() { return !!this.getAccess() },
+};
+
+// ═══════════════════════════════════════════════════════════
+// API HELPER
+// ═══════════════════════════════════════════════════════════
+async function api(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (Auth.getAccess()) headers['Authorization'] = `Bearer ${Auth.getAccess()}`;
+
+  // Don't set Content-Type for FormData (browser sets multipart boundary)
+  if (options.body instanceof FormData) delete headers['Content-Type'];
+
+  let res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+
+  // Token expired → try refresh
+  if (res.status === 401 && Auth.getRefresh()) {
+    const refreshRes = await fetch(`${API_BASE}/auth/refresh/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh: Auth.getRefresh() }),
+    });
+    if (refreshRes.ok) {
+      const data = await refreshRes.json();
+      localStorage.setItem('kiti_access', data.access);
+      headers['Authorization'] = `Bearer ${data.access}`;
+      res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    } else {
+      Auth.clear();
+      showLogin();
+      throw new Error('Session expired. Please log in again.');
+    }
+  }
+  return res;
+}
+
+async function apiJSON(path, options = {}) {
+  const res = await api(path, options);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }));
+    throw new Error(err.detail || JSON.stringify(err));
+  }
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+const COLORS_BG  = ['#7c3aed','#0891b2','#059669','#d97706','#dc2626','#9333ea'];
+const COLORS_TXT = ['#ddd6fe','#a5f3fc','#a7f3d0','#fde68a','#fecaca','#e9d5ff'];
+function initials(n) { return (n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() }
+function avStyle(name) { const i=(name||'').charCodeAt(0)%6; return `background:${COLORS_BG[i]};color:${COLORS_TXT[i]}` }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function fmtDate(d) { if(!d) return ''; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) }
+function gradeColor(p) { return p>=70?'var(--green)':p>=50?'var(--accent3)':'var(--red)' }
+function gradeLetter(p) { if(p>=80)return'A';if(p>=65)return'B';if(p>=50)return'C';if(p>=40)return'D';return'F' }
+function loading() { return `<div class="loading-spinner"><div class="spinner"></div>Loading...</div>` }
+function errBox(msg) { return `<div style="text-align:center;padding:40px;color:var(--red)">⚠️ ${esc(msg)}</div>` }
+
+let currentRole = 'student';
+let currentSection = 'dashboard';
+
+// ═══════════════════════════════════════════════════════════
+// LOGIN / LOGOUT
+// ═══════════════════════════════════════════════════════════
+function selectRole(r) {
+  currentRole = r;
+  document.getElementById('roleStudent').classList.toggle('selected', r==='student');
+  document.getElementById('roleLecturer').classList.toggle('selected', r==='lecturer');
+  if (r === 'student') { document.getElementById('loginEmail').value = 'alice@kiti.ac.ke'; document.getElementById('loginPassword').value = 'student1234'; }
+  else { document.getElementById('loginEmail').value = 'omondi@kiti.ac.ke'; document.getElementById('loginPassword').value = 'lecturer1234'; }
+}
+function fillDemo() { selectRole(currentRole); }
+
+async function doLogin() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+  const alert    = document.getElementById('loginAlert');
+  if (!email || !password) { showAlert(alert, 'Please enter email and password.'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  alert.style.display = 'none';
+  try {
+    const data = await apiJSON('/auth/login/', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    Auth.setTokens(data.access, data.refresh, data.user);
+    currentRole = data.user.role;
+    bootApp(data.user);
+  } catch(e) {
+    showAlert(alert, e.message || 'Login failed. Check your credentials.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In →';
+  }
+}
+function showAlert(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+async function doLogout() {
+  try {
+    await api('/auth/logout/', { method: 'POST', body: JSON.stringify({ refresh: Auth.getRefresh() }) });
+  } catch(e) {}
+  Auth.clear();
+  showLogin();
+}
+function showLogin() {
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('appShell').style.display  = 'none';
+}
+function bootApp(user) {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appShell').style.display  = 'flex';
+  document.getElementById('appShell').style.flexDirection = 'column';
+  document.getElementById('roleLabel').textContent = user.role === 'student' ? 'Student Portal' : 'Lecturer Portal';
+  document.getElementById('topAvatar').textContent = initials(user.full_name);
+  buildNav();
+  switchSection('dashboard');
+  loadNotifCount();
+}
+
+// Auto-login if token exists
+window.addEventListener('DOMContentLoaded', () => {
+  const user = Auth.getUser();
+  if (user && Auth.getAccess()) { currentRole = user.role; bootApp(user); }
+});
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function buildNav() {
+  const tabs = currentRole === 'student' ? [
+    {id:'dashboard',icon:'🏠',label:'Home'},
+    {id:'assignments',icon:'📝',label:'Assignments'},
+    {id:'classes',icon:'💻',label:'Classes'},
+    {id:'cat',icon:'📋',label:'Online CAT'},
+    {id:'modules',icon:'📚',label:'Modules'},
+    {id:'revision',icon:'📄',label:'Revision'},
+    {id:'collaborate',icon:'🤝',label:'Collaborate'},
+    {id:'profile',icon:'👤',label:'Profile'},
+  ] : [
+    {id:'dashboard',icon:'📊',label:'Dashboard'},
+    {id:'students',icon:'👥',label:'Students'},
+    {id:'assignments',icon:'📝',label:'Assignments'},
+    {id:'classes',icon:'💻',label:'Classes'},
+    {id:'cat',icon:'📋',label:'CAT Manager'},
+    {id:'notes',icon:'💬',label:'Notes'},
+    {id:'collaborate',icon:'🤝',label:'Rooms'},
+    {id:'profile',icon:'👤',label:'Profile'},
+  ];
+  document.getElementById('topnavTabs').innerHTML = tabs.map(t =>
+    `<div class="tnav" id="tab_${t.id}" onclick="switchSection('${t.id}')">${t.icon} ${t.label}</div>`
+  ).join('');
+}
+function switchSection(id) {
+  currentSection = id;
+  document.querySelectorAll('.tnav').forEach(t => t.classList.remove('active'));
+  const tab = document.getElementById('tab_' + id);
+  if (tab) tab.classList.add('active');
+  document.getElementById('contentArea').innerHTML = loading();
+  const fns = {
+    dashboard:   currentRole === 'student' ? renderStudentDashboard : renderLecturerDashboard,
+    assignments: currentRole === 'student' ? renderStudentAssignments : renderLecturerAssignments,
+    classes:     renderClasses,
+    cat:         currentRole === 'student' ? renderStudentCAT : renderLecturerCAT,
+    modules:     renderModules,
+    revision:    renderRevision,
+    collaborate: renderCollaborate,
+    profile:     renderProfile,
+    students:    renderStudents,
+    notes:       renderNotes,
+  };
+  (fns[id] || (() => { document.getElementById('contentArea').innerHTML = '<div class="empty"><div class="empty-icon">🚧</div><p>Coming soon</p></div>'; }))();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STUDENT DASHBOARD
+// ═══════════════════════════════════════════════════════════
+async function renderStudentDashboard() {
+  try {
+    const [report, announcements, classes] = await Promise.all([
+      apiJSON(`/reports/student/${Auth.getUser().id}/?format=json`),
+      apiJSON('/courses/announcements/?page_size=4'),
+      apiJSON('/courses/classes/?status=live'),
+    ]);
+    const s = report.summary;
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:24px">
+      <h2 style="font-size:22px;font-weight:800">Good day, ${esc(report.student.full_name.split(' ')[0])} 👋</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:4px">Here's your academic overview</p>
+    </div>
+    <div class="g4" style="margin-bottom:24px">
+      <div class="stat"><div class="stat-icon">🎯</div><div class="stat-val" style="color:var(--accent)">${s.avg_percentage}%</div><div class="stat-label">Overall Average (${s.grade_letter})</div></div>
+      <div class="stat"><div class="stat-icon">📅</div><div class="stat-val" style="color:${s.attendance_rate>=75?'var(--green)':'var(--red)'}">${s.attendance_rate}%</div><div class="stat-label">Attendance Rate</div></div>
+      <div class="stat"><div class="stat-icon">💻</div><div class="stat-val" style="color:var(--red)">${classes.count||classes.results?.length||0}</div><div class="stat-label">Live Classes Now</div></div>
+      <div class="stat"><div class="stat-icon">📝</div><div class="stat-val" style="color:var(--accent3)">${s.submissions}</div><div class="stat-label">Assignments Submitted</div></div>
+    </div>
+    <div class="g2-3" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title">📢 Announcements</div>
+        ${(announcements.results||announcements).slice(0,4).map(a => `
+        <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+            <span class="badge ${a.type==='exam'?'b-red':a.type==='course'?'b-blue':'b-gray'}">${a.type}</span>
+            <span style="font-size:11px;color:var(--muted)">${fmtDate(a.created_at)}</span>
+          </div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px">${esc(a.title)}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.5">${esc(a.body)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">— ${esc(a.author_name)}</div>
+        </div>`).join('') || '<p style="color:var(--muted);font-size:13px">No announcements.</p>'}
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">📊 My Grades</div>
+          ${report.grades.slice(0,5).map(g => `
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span style="font-weight:500">${esc(g.assignment)}</span>
+              <span style="font-weight:700;color:${gradeColor(g.percentage)}">${g.percentage}%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" style="width:${g.percentage}%;background:${gradeColor(g.percentage)}"></div></div>
+          </div>`).join('') || '<p style="color:var(--muted);font-size:13px">No grades yet.</p>'}
+        </div>
+        <div class="card">
+          <div class="card-title">💬 Lecturer Notes</div>
+          ${report.notes.slice(0,3).map(n => `
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${esc(n.author)} · ${fmtDate(n.date)}</div>
+            <div style="font-size:13px;line-height:1.5">${esc(n.content)}</div>
+          </div>`).join('') || '<p style="color:var(--muted);font-size:13px">No notes from lecturers.</p>'}
+        </div>
+      </div>
+    </div>`;
+  } catch(e) {
+    document.getElementById('contentArea').innerHTML = errBox(e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// LECTURER DASHBOARD
+// ═══════════════════════════════════════════════════════════
+async function renderLecturerDashboard() {
+  try {
+    const [classReport, assignments, announcements] = await Promise.all([
+      apiJSON('/reports/class/'),
+      apiJSON('/assignments/'),
+      apiJSON('/courses/announcements/'),
+    ]);
+    const students  = classReport.students;
+    const atRisk    = students.filter(s => s.at_risk);
+    const classAvg  = students.length ? Math.round(students.reduce((a,s)=>a+s.avg_grade,0)/students.length) : 0;
+    const classAtt  = students.length ? Math.round(students.reduce((a,s)=>a+s.att_rate,0)/students.length) : 0;
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:24px;display:flex;align-items:center;justify-content:space-between">
+      <div><h2 style="font-size:22px;font-weight:800">Lecturer Dashboard</h2><p style="color:var(--muted);font-size:14px;margin-top:4px">Manage your students and courses</p></div>
+      <button class="btn btn-primary" onclick="openAddAnnouncementModal()">📢 Post Announcement</button>
+    </div>
+    <div class="g4" style="margin-bottom:24px">
+      <div class="stat"><div class="stat-icon">👥</div><div class="stat-val" style="color:var(--accent)">${students.length}</div><div class="stat-label">Total Students</div></div>
+      <div class="stat"><div class="stat-icon">🎯</div><div class="stat-val" style="color:${gradeColor(classAvg)}">${classAvg}%</div><div class="stat-label">Class Average</div></div>
+      <div class="stat"><div class="stat-icon">📅</div><div class="stat-val" style="color:${classAtt>=75?'var(--green)':'var(--red)'}">${classAtt}%</div><div class="stat-label">Avg Attendance</div></div>
+      <div class="stat"><div class="stat-icon">⚠️</div><div class="stat-val" style="color:var(--red)">${atRisk.length}</div><div class="stat-label">At-Risk Students</div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">📊 Student Performance <button class="btn btn-outline btn-sm" onclick="switchSection('students')">View All</button></div>
+        ${students.slice(0,6).map(s => `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div class="av av-sm" style="${avStyle(s.full_name)}">${initials(s.full_name)}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+              <span style="font-weight:500">${esc(s.full_name)}</span>
+              <span style="font-weight:700;color:${gradeColor(s.avg_grade)}">${s.avg_grade}%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" style="width:${s.avg_grade}%;background:${gradeColor(s.avg_grade)}"></div></div>
+          </div>
+          ${s.at_risk ? '<span class="badge b-red">At Risk</span>' : ''}
+        </div>`).join('')}
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">⚠️ At-Risk Students</div>
+          ${atRisk.length ? atRisk.map(s => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="av av-sm" style="${avStyle(s.full_name)}">${initials(s.full_name)}</div>
+              <div><div style="font-size:13px;font-weight:500">${esc(s.full_name)}</div>
+              <div style="font-size:11px;color:var(--muted)">${s.avg_grade<50?'Low grades':'Low attendance'}</div></div>
+            </div>
+            <button class="btn btn-xs btn-outline" onclick="openNoteModal(${s.id},'${esc(s.full_name)}')">Add Note</button>
+          </div>`).join('') : '<p style="color:var(--muted);font-size:13px">All students performing well 🎉</p>'}
+        </div>
+        <div class="card">
+          <div class="card-title">📝 Recent Assignments <button class="btn btn-accent btn-sm" onclick="switchSection('assignments')">Manage</button></div>
+          ${(assignments.results||assignments).slice(0,3).map(a => `
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-size:13px;font-weight:600">${esc(a.title)}</div>
+              <div style="font-size:11px;color:var(--muted)">${esc(a.subject)} · Due ${fmtDate(a.due_date)}</div></div>
+              <span class="badge b-blue">${a.submission_count||0} submitted</span>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  } catch(e) {
+    document.getElementById('contentArea').innerHTML = errBox(e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ASSIGNMENTS
+// ═══════════════════════════════════════════════════════════
+async function renderStudentAssignments() {
+  try {
+    const [assignments, mySubmissions] = await Promise.all([
+      apiJSON('/assignments/'),
+      apiJSON('/assignments/submissions/mine/'),
+    ]);
+    const subs = {};
+    (mySubmissions.results || mySubmissions).forEach(s => { subs[s.assignment] = s; });
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:800">My Assignments</h2></div>
+    ${(assignments.results || assignments).map(a => {
+      const sub = subs[a.id];
+      const daysLeft = Math.ceil((new Date(a.due_date) - new Date()) / 86400000);
+      return `<div class="assign-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-weight:700;font-size:15px">${esc(a.title)}</div>
+          <div style="display:flex;gap:8px">
+            ${sub ? `<span class="badge b-green">✓ Submitted</span>` : `<span class="badge ${daysLeft<=2?'b-red':daysLeft<=5?'b-amber':'b-blue'}">${daysLeft}d left</span>`}
+            <span class="badge b-purple">${esc(a.subject)}</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);display:flex;gap:14px;margin-bottom:10px">
+          <span>📅 Due: ${fmtDate(a.due_date)}</span>
+          <span>🏆 Marks: ${a.max_marks}</span>
+          ${sub && sub.marks_obtained !== null ? `<span style="color:var(--green)">✓ Score: ${sub.marks_obtained}/${a.max_marks}</span>` : ''}
+        </div>
+        <div style="font-size:13px;color:#9ca3af;line-height:1.6;margin-bottom:14px">${esc(a.description)}</div>
+        ${sub && sub.feedback ? `<div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px"><strong style="color:var(--muted);font-size:11px">FEEDBACK:</strong> ${esc(sub.feedback)}</div>` : ''}
+        ${!sub ? `<div style="display:flex;gap:10px"><button class="btn btn-accent" onclick="openSubmitModal(${a.id},'${esc(a.title)}',${a.max_marks})">📤 Submit Assignment</button></div>`
+               : `<div style="display:flex;align-items:center;gap:12px"><div style="font-size:28px;font-weight:900;color:${sub.marks_obtained!==null?gradeColor(sub.percentage):'var(--muted)'}">${sub.marks_obtained!==null?gradeLetter(sub.percentage):'⏳'}</div><div style="font-size:13px;color:var(--muted)">${sub.marks_obtained!==null?`${sub.percentage}% · ${sub.marks_obtained}/${a.max_marks}`:'Awaiting grading'}</div></div>`}
+      </div>`;
+    }).join('') || '<div class="empty"><div class="empty-icon">📝</div><p>No assignments yet.</p></div>'}`;
+  } catch(e) {
+    document.getElementById('contentArea').innerHTML = errBox(e.message);
+  }
+}
+
+async function renderLecturerAssignments() {
+  try {
+    const assignments = await apiJSON('/assignments/');
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:20px;font-weight:800">Assignments</h2>
+      <button class="btn btn-accent" onclick="openAddAssignmentModal()">➕ Add Assignment</button>
+    </div>
+    ${(assignments.results || assignments).map(a => `
+    <div class="assign-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-weight:700;font-size:15px">${esc(a.title)}</div>
+        <div style="display:flex;gap:8px">
+          <span class="badge b-purple">${esc(a.subject)}</span>
+          <span class="badge b-blue">${a.submission_count||0} submitted</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">📅 Due: ${fmtDate(a.due_date)} · 🏆 Max: ${a.max_marks}</div>
+      <div style="font-size:13px;color:#9ca3af;line-height:1.6;margin-bottom:14px">${esc(a.description)}</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline btn-sm" onclick="openGradingModal(${a.id},'${esc(a.title)}',${a.max_marks})">📊 Grade Submissions</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteAssignment(${a.id})">🗑️</button>
+      </div>
+    </div>`).join('') || '<div class="empty"><div class="empty-icon">📝</div><p>No assignments yet.</p></div>'}`;
+  } catch(e) {
+    document.getElementById('contentArea').innerHTML = errBox(e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CLASSES
+// ═══════════════════════════════════════════════════════════
+async function renderClasses() {
+  try {
+    const classes = await apiJSON('/courses/classes/');
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:20px;font-weight:800">Online Classes</h2>
+      ${currentRole==='lecturer'?`<button class="btn btn-accent" onclick="openAddClassModal()">➕ Add Class</button>`:''}
+    </div>
+    <div class="g3">
+    ${(classes.results||classes).map(c => `
+    <div class="card" style="padding:22px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="font-size:36px">💻</div>
+        ${c.status==='live'?`<span class="live-pill"><span class="live-dot"></span>LIVE NOW</span>`:`<span class="badge ${c.status==='upcoming'?'b-blue':'b-gray'}">${c.status}</span>`}
+      </div>
+      <div style="font-weight:800;font-size:16px;margin-bottom:4px">${esc(c.name)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">👤 ${esc(c.teacher_name)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">🗓️ ${esc(c.schedule)}</div>
+      <div style="font-size:12px;color:var(--accent);margin-bottom:14px;line-height:1.5">${esc(c.description||'')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${c.meeting_link&&c.status!=='completed'?`<a href="${esc(c.meeting_link)}" target="_blank" class="btn btn-${c.status==='live'?'accent':'outline'} btn-sm" style="text-decoration:none">${c.status==='live'?'🔴 Join Now':'🔗 Join Class'}</a>`:''}
+        ${currentRole==='lecturer'?`<button class="btn btn-outline btn-sm" onclick="openEditClassModal(${c.id})">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteClass(${c.id})">🗑️</button>`:''}
+      </div>
+    </div>`).join('') || '<div class="empty g3" style="grid-column:1/-1"><div class="empty-icon">💻</div><p>No classes yet.</p></div>'}
+    </div>`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODULES
+// ═══════════════════════════════════════════════════════════
+async function renderModules() {
+  try {
+    const [modules, progress] = await Promise.all([
+      apiJSON('/courses/modules/'),
+      apiJSON('/courses/my-progress/'),
+    ]);
+    const progMap = {};
+    (progress.results||progress).forEach(p => { progMap[p.module] = p; });
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:800">Learning Modules</h2></div>
+    <div class="g4">
+    ${(modules.results||modules).map(m => {
+      const p = progMap[m.id];
+      const pct = p ? p.percentage : 0;
+      return `<div class="module-card" onclick="updateModuleProgress(${m.id},${m.total_lessons},'${esc(m.title)}')">
+        <div style="font-size:36px;margin-bottom:12px">${m.icon||'📚'}</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px">${esc(m.title)}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px">${esc(m.description)}</div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
+            <span style="color:var(--muted)">${m.total_lessons} lessons</span>
+            <span style="color:var(--accent);font-weight:700">${pct}%</span>
+          </div>
+          <div class="progress"><div class="progress-bar" style="width:${pct}%;background:${pct>=70?'var(--green)':pct>=40?'var(--accent)':'var(--accent2)'}"></div></div>
+        </div>
+        <div>${(m.tags||[]).map(t=>`<span style="display:inline-block;background:var(--bg3);color:var(--muted);border-radius:6px;padding:2px 8px;font-size:10px;margin-right:4px;margin-bottom:4px">${esc(t)}</span>`).join('')}</div>
+      </div>`;
+    }).join('')}
+    </div>`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+async function updateModuleProgress(moduleId, totalLessons, title) {
+  showModal(`
+    <div class="modal-header"><span class="modal-title">📚 ${esc(title)}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Lessons Completed (out of ${totalLessons})</label>
+        <input type="number" class="form-control" id="lessons_done" min="0" max="${totalLessons}" value="0">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-accent" style="flex:1" onclick="saveModuleProgress(${moduleId})">Save Progress</button>
+      </div>
+    </div>`);
+  // Load current progress
+  try {
+    const p = await apiJSON(`/courses/modules/${moduleId}/progress/`);
+    document.getElementById('lessons_done').value = p.lessons_done || 0;
+  } catch(e) {}
+}
+
+async function saveModuleProgress(moduleId) {
+  const lessons_done = parseInt(document.getElementById('lessons_done').value) || 0;
+  try {
+    await apiJSON(`/courses/modules/${moduleId}/progress/`, {
+      method: 'PATCH',
+      body: JSON.stringify({ lessons_done }),
+    });
+    closeModal();
+    renderModules();
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// REVISION PAPERS
+// ═══════════════════════════════════════════════════════════
+async function renderRevision() {
+  try {
+    const papers = await apiJSON('/courses/revision-papers/');
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <div><h2 style="font-size:20px;font-weight:800">Revision Papers</h2><p style="color:var(--muted);font-size:13px;margin-top:4px">KNEC Diploma ICT Past Papers & Study Materials</p></div>
+      ${currentRole==='lecturer'?`<button class="btn btn-accent" onclick="openUploadPaperModal()">📤 Upload Paper</button>`:''}
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-outline btn-sm" onclick="filterRevision('')">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRevision('knec')">📄 KNEC Papers</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRevision('notes')">📝 Notes</button>
+      <button class="btn btn-outline btn-sm" onclick="filterRevision('practice')">✏️ Practice</button>
+    </div>
+    <div class="g2" id="revList">
+    ${(papers.results||papers).map(p => `
+    <div class="rev-card">
+      <div style="font-size:28px;flex-shrink:0">${p.type==='knec'?'📄':p.type==='notes'?'📝':'✏️'}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px">${esc(p.title)}</div>
+        <div style="font-size:12px;color:var(--muted)">${p.year} · ${esc(p.paper||'')} · <span class="badge ${p.type==='knec'?'b-red':p.type==='notes'?'b-blue':'b-amber'}">${p.type}</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+        ${p.file_url?`<a href="${esc(p.file_url)}" target="_blank" class="btn btn-outline btn-sm" style="text-decoration:none">⬇️ Download</a>`:'<span style="color:var(--muted);font-size:12px">No file</span>'}
+      </div>
+    </div>`).join('') || '<p style="color:var(--muted);grid-column:1/-1">No revision papers yet.</p>'}
+    </div>`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ONLINE CAT
+// ═══════════════════════════════════════════════════════════
+async function renderStudentCAT() {
+  try {
+    const [cats, myAttempts] = await Promise.all([
+      apiJSON('/assessments/'),
+      apiJSON('/assessments/my-attempts/'),
+    ]);
+    const attemptMap = {};
+    (myAttempts.results||myAttempts).forEach(a => { attemptMap[a.cat] = a; });
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:800">Online CAT / Tests</h2></div>
+    ${(cats.results||cats).map(cat => {
+      const att = attemptMap[cat.id];
+      return `<div class="assign-card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-weight:700;font-size:15px">${esc(cat.title)}</div>
+          <span class="badge ${cat.status==='open'?'b-red':cat.status==='upcoming'?'b-blue':'b-green'}">${cat.status.toUpperCase()}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);display:flex;gap:14px;margin-bottom:12px">
+          <span>📚 ${esc(cat.subject)}</span>
+          <span>⏱️ ${cat.duration_mins} minutes</span>
+          <span>❓ ${cat.question_count} questions</span>
+          ${cat.scheduled_date?`<span>📅 ${fmtDate(cat.scheduled_date)}</span>`:''}
+        </div>
+        ${att && att.is_complete ?
+          `<div style="display:flex;align-items:center;gap:16px">
+            <div style="font-size:36px;font-weight:900;color:${gradeColor(att.percentage||0)}">${att.percentage}%</div>
+            <div><div style="font-weight:600">Score: ${att.score}/${cat.question_count}</div><div style="font-size:12px;color:var(--muted)">Completed</div></div>
+          </div>` :
+          cat.status === 'open' ? `<button class="btn btn-accent" onclick="startCAT(${cat.id},'${esc(cat.title)}',${cat.duration_mins})">▶️ Start CAT</button>` :
+          `<button class="btn btn-outline" disabled>${cat.status === 'upcoming' ? '🔒 Not open yet' : '✓ Closed'}</button>`
+        }
+      </div>`;
+    }).join('') || '<div class="empty"><div class="empty-icon">📋</div><p>No CATs available.</p></div>'}`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+let catTimerInterval = null;
+
+async function startCAT(catId, title, durationMins) {
+  try {
+    // Start attempt
+    await apiJSON(`/assessments/${catId}/start/`, { method: 'POST' });
+    // Get full CAT with questions
+    const cat = await apiJSON(`/assessments/${catId}/`);
+    let timeLeft = durationMins * 60;
+    const answers = {};
+
+    showModal(`
+    <div class="modal-header">
+      <span class="modal-title">📋 ${esc(title)}</span>
+      <div id="catTimer" style="font-family:var(--mono);font-size:16px;color:var(--accent)">⏱ ${fmtTimer(timeLeft)}</div>
+    </div>
+    <div class="modal-body">
+      ${(cat.questions||[]).map((q,qi) => `
+      <div style="margin-bottom:24px;padding:18px;background:var(--bg3);border-radius:12px;border:1px solid var(--border)">
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px">${qi+1}. ${esc(q.text)}</div>
+        ${Object.entries(q.options||{}).map(([letter,opt]) => `
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1.5px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all .2s" id="opt_${qi}_${letter}">
+          <input type="radio" name="q${qi}" value="${letter}" onchange="selectCATOpt(${qi},'${letter}',${q.id})" style="accent-color:var(--accent)">
+          <span style="font-size:13px"><strong>${letter}.</strong> ${esc(opt)}</span>
+        </label>`).join('')}
+      </div>`).join('')}
+      <button class="btn btn-accent" style="width:100%" onclick="submitCATAnswers(${catId})">✅ Submit CAT</button>
+    </div>`, 'lg');
+
+    window._catAnswers = {};
+    if (catTimerInterval) clearInterval(catTimerInterval);
+    catTimerInterval = setInterval(() => {
+      timeLeft--;
+      const el = document.getElementById('catTimer');
+      if (el) el.textContent = `⏱ ${fmtTimer(timeLeft)}`;
+      if (timeLeft <= 0) { clearInterval(catTimerInterval); submitCATAnswers(catId); }
+    }, 1000);
+  } catch(e) { alert(e.message); }
+}
+
+function selectCATOpt(qi, letter, questionId) {
+  if (!window._catAnswers) window._catAnswers = {};
+  window._catAnswers[questionId] = letter;
+  document.querySelectorAll(`[id^="opt_${qi}_"]`).forEach(el => el.style.borderColor = 'var(--border)');
+  const sel = document.getElementById(`opt_${qi}_${letter}`);
+  if (sel) sel.style.borderColor = 'var(--accent)';
+}
+
+function fmtTimer(s) {
+  const m = Math.floor(s/60), sec = s%60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+async function submitCATAnswers(catId) {
+  if (catTimerInterval) clearInterval(catTimerInterval);
+  const answers = Object.entries(window._catAnswers||{}).map(([qId, chosen]) => ({
+    question: parseInt(qId), chosen_ans: chosen
+  }));
+  try {
+    const result = await apiJSON(`/assessments/${catId}/submit/`, {
+      method: 'POST',
+      body: JSON.stringify({ answers }),
+    });
+    closeModal();
+    showModal(`
+    <div class="modal-header"><span class="modal-title">🎉 CAT Results</span><button class="modal-close" onclick="closeModal();renderStudentCAT()">✕</button></div>
+    <div class="modal-body" style="text-align:center">
+      <div style="font-size:72px;margin-bottom:12px">${result.percentage>=70?'🏆':result.percentage>=50?'😊':'😔'}</div>
+      <div style="font-size:48px;font-weight:900;color:${gradeColor(result.percentage)}">${result.percentage}%</div>
+      <div style="font-size:16px;color:var(--muted);margin-top:6px">${result.score} / ${result.total} correct</div>
+      <div style="font-size:14px;margin-top:16px;padding:14px;background:var(--bg3);border-radius:10px">${esc(result.message)}</div>
+      <button class="btn btn-primary" style="margin-top:20px;width:100%" onclick="closeModal();renderStudentCAT()">Done</button>
+    </div>`);
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// LECTURER CAT
+// ═══════════════════════════════════════════════════════════
+async function renderLecturerCAT() {
+  try {
+    const cats = await apiJSON('/assessments/');
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:20px;font-weight:800">CAT Manager</h2>
+      <button class="btn btn-accent" onclick="openAddCATModal()">➕ Create CAT</button>
+    </div>
+    ${(cats.results||cats).map(cat => `
+    <div class="assign-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-weight:700;font-size:15px">${esc(cat.title)}</div>
+        <div style="display:flex;gap:8px">
+          <span class="badge ${cat.status==='open'?'b-red':cat.status==='upcoming'?'b-blue':'b-green'}">${cat.status}</span>
+          <span class="badge b-purple">${cat.question_count} Qs</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">📚 ${esc(cat.subject)} · ⏱️ ${cat.duration_mins} min · 📅 ${fmtDate(cat.scheduled_date)}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="viewCATAttempts(${cat.id},'${esc(cat.title)}')">📊 Results</button>
+        <button class="btn btn-${cat.status==='open'?'danger':'accent'} btn-sm" onclick="toggleCATStatus(${cat.id},'${cat.status}')">
+          ${cat.status==='upcoming'?'▶️ Open Now':cat.status==='open'?'⏹ Close':'✓ Closed'}
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCAT(${cat.id})">🗑️</button>
+      </div>
+    </div>`).join('') || '<div class="empty"><div class="empty-icon">📋</div><p>No CATs yet.</p></div>'}`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+async function toggleCATStatus(id, current) {
+  const newStatus = current === 'upcoming' ? 'open' : current === 'open' ? 'closed' : 'upcoming';
+  try {
+    await apiJSON(`/assessments/${id}/status/`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
+    renderLecturerCAT();
+  } catch(e) { alert(e.message); }
+}
+
+async function deleteCAT(id) {
+  if (!confirm('Delete this CAT?')) return;
+  try {
+    await api(`/assessments/${id}/`, { method: 'DELETE' });
+    renderLecturerCAT();
+  } catch(e) { alert(e.message); }
+}
+
+async function viewCATAttempts(catId, title) {
+  try {
+    const attempts = await apiJSON(`/assessments/${catId}/attempts/`);
+    showModal(`
+    <div class="modal-header"><span class="modal-title">📊 ${esc(title)} – Results</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <table>
+        <thead><tr><th>Student</th><th>Score</th><th>Percentage</th><th>Time</th></tr></thead>
+        <tbody>
+        ${(attempts.results||attempts).map(a => `<tr>
+          <td>${esc(a.student_name)}</td>
+          <td>${a.score}/${(attempts.results||attempts).length ? a.score : '?'}</td>
+          <td><span style="font-weight:700;color:${gradeColor(a.percentage||0)}">${a.percentage||0}%</span></td>
+          <td style="color:var(--muted);font-size:12px">${a.time_taken ? Math.floor(a.time_taken/60)+'m '+a.time_taken%60+'s' : '—'}</td>
+        </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted)">No submissions yet.</td></tr>'}
+        </tbody>
+      </table>
+    </div>`, 'lg');
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COLLABORATE
+// ═══════════════════════════════════════════════════════════
+async function renderCollaborate() {
+  try {
+    const rooms = await apiJSON('/collaboration/rooms/');
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:20px;font-weight:800">Collaborate & Rooms</h2>
+      <button class="btn btn-accent" onclick="openCreateRoomModal()">➕ Create Room</button>
+    </div>
+    <div class="g3">
+    ${(rooms.results||rooms).map(r => `
+    <div class="card" style="padding:20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="font-size:28px">${r.icon||'💬'}</div>
+        <div><div style="font-weight:700;font-size:15px">${esc(r.name)}</div>
+          <span class="badge ${r.type==='codespace'?'b-cyan':r.type==='class'?'b-blue':'b-purple'}">${r.type}</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${r.member_count} members: ${(r.member_names||[]).slice(0,3).map(esc).join(', ')}${r.member_count>3?'...':''}</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-outline btn-sm" onclick="openRoomChat(${r.id},'${esc(r.name)}')">💬 Chat</button>
+        ${r.type==='codespace'?`<button class="btn btn-primary btn-sm" onclick="openRoomChat(${r.id},'${esc(r.name)}')">💻 Code</button>`:''}
+        <button class="btn btn-outline btn-sm" onclick="joinRoom(${r.id})">➕ Join</button>
+      </div>
+    </div>`).join('') || '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🤝</div><p>No rooms yet. Create one!</p></div>'}
+    </div>`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+async function joinRoom(id) {
+  try {
+    await apiJSON(`/collaboration/rooms/${id}/join/`, { method: 'POST' });
+    renderCollaborate();
+  } catch(e) { alert(e.message); }
+}
+
+async function openRoomChat(roomId, roomName) {
+  try {
+    const messages = await apiJSON(`/collaboration/rooms/${roomId}/messages/`);
+    const me = Auth.getUser();
+    showModal(`
+    <div class="modal-header"><span class="modal-title">💬 ${esc(roomName)}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" style="padding:0">
+      <div style="height:380px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px" id="chatMsgsModal">
+        ${(messages.results||messages).map(m => {
+          const own = m.sender === me.id;
+          return `<div style="display:flex;gap:10px;align-items:flex-end;${own?'flex-direction:row-reverse':''}">
+            ${!own?`<div class="av av-sm" style="${avStyle(m.sender_name)}">${m.sender_initials||initials(m.sender_name)}</div>`:''}
+            <div>
+              <div style="max-width:75%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;background:${own?'var(--accent2)':'var(--bg3)'};border-radius:${own?'14px 14px 4px 14px':'14px 14px 14px 4px'}">${esc(m.text)}</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:2px;text-align:${own?'right':'left'}">${m.sender_name} · ${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+            </div>
+          </div>`;
+        }).join('') || '<div style="text-align:center;color:var(--muted);padding:20px">No messages yet. Start the conversation!</div>'}
+      </div>
+      <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;background:var(--bg2)">
+        <input class="form-control" id="chatInputModal" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendRoomMessage(${roomId})">
+        <button class="btn btn-primary btn-sm" onclick="sendRoomMessage(${roomId})">Send</button>
+      </div>
+    </div>`, 'lg');
+    // Scroll to bottom
+    setTimeout(() => { const el = document.getElementById('chatMsgsModal'); if(el) el.scrollTop = el.scrollHeight; }, 100);
+  } catch(e) { alert(e.message); }
+}
+
+async function sendRoomMessage(roomId) {
+  const inp = document.getElementById('chatInputModal');
+  const text = inp.value.trim();
+  if (!text) return;
+  try {
+    await apiJSON(`/collaboration/rooms/${roomId}/messages/`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+    inp.value = '';
+    openRoomChat(roomId, '');
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════════════
+async function renderProfile() {
+  try {
+    const [me, report] = await Promise.all([
+      apiJSON('/accounts/me/'),
+      currentRole === 'student' ? apiJSON(`/reports/student/${Auth.getUser().id}/?format=json`) : Promise.resolve(null),
+    ]);
+    const profile = me.student_profile || me.lecturer_profile || {};
+    const s = report?.summary || {};
+    document.getElementById('contentArea').innerHTML = `
+    <div class="g2-3">
+      <div>
+        <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px">
+          <div style="height:140px;background:linear-gradient(135deg,#1e1b4b,#7c3aed)"></div>
+          <div style="position:relative;padding:44px 24px 20px">
+            <div style="position:absolute;top:-28px;left:24px">
+              <div class="av av-lg" style="${avStyle(me.full_name)};border:4px solid var(--card)">${initials(me.full_name)}</div>
+            </div>
+            <div style="font-size:22px;font-weight:800">${esc(me.full_name)}</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:2px">${esc(profile.reg_number||profile.staff_id||'')} · ${esc(profile.course||profile.department||'')}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">✉️ ${esc(me.email)} · 📞 ${esc(me.phone||'')}</div>
+            ${report ? `<div style="display:flex;gap:24px;margin-top:14px">
+              <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">${s.avg_percentage||0}%</div><div style="font-size:11px;color:var(--muted)">Avg Grade</div></div>
+              <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green)">${s.attendance_rate||0}%</div><div style="font-size:11px;color:var(--muted)">Attendance</div></div>
+              <div style="text-align:center"><div style="font-size:20px;font-weight:700">${s.submissions||0}</div><div style="font-size:11px;color:var(--muted)">Submitted</div></div>
+            </div>` : ''}
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">Edit Profile</div>
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-control" id="prof_name" value="${esc(me.full_name)}"></div>
+          <div class="form-group"><label class="form-label">Phone</label><input class="form-control" id="prof_phone" value="${esc(me.phone||'')}"></div>
+          <button class="btn btn-accent" style="width:100%" onclick="saveProfile()">Save Changes</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Change Password</div>
+          <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-control" id="old_pass"></div>
+          <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-control" id="new_pass"></div>
+          <button class="btn btn-outline" style="width:100%" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+      <div>
+        ${report ? `
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">My Grades <a onclick="downloadReport()" style="cursor:pointer;color:var(--accent);font-size:12px">⬇️ Download PDF Report</a></div>
+          ${(report.grades||[]).map(g => `
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+            <div style="width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;background:${gradeColor(g.percentage)}22;color:${gradeColor(g.percentage)}">${gradeLetter(g.percentage)}</div>
+            <div style="flex:1"><div style="font-weight:600;font-size:13px">${esc(g.assignment)}</div><div style="font-size:11px;color:var(--muted)">${g.score}/${g.max_marks} marks</div></div>
+            <span style="font-weight:700;color:${gradeColor(g.percentage)}">${g.percentage}%</span>
+          </div>`).join('') || '<p style="color:var(--muted);font-size:13px">No grades yet.</p>'}
+        </div>` : ''}
+        <div class="card">
+          <div class="card-title">My Notifications</div>
+          <div id="notifList"><div class="loading-spinner"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </div>`;
+    loadNotifList();
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+async function saveProfile() {
+  try {
+    await apiJSON('/accounts/me/', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        full_name: document.getElementById('prof_name').value,
+        phone:     document.getElementById('prof_phone').value,
+      }),
+    });
+    alert('Profile updated!');
+    renderProfile();
+  } catch(e) { alert(e.message); }
+}
+
+async function changePassword() {
+  try {
+    await apiJSON('/accounts/change-password/', {
+      method: 'POST',
+      body: JSON.stringify({
+        old_password: document.getElementById('old_pass').value,
+        new_password: document.getElementById('new_pass').value,
+      }),
+    });
+    alert('Password changed successfully!');
+    document.getElementById('old_pass').value = '';
+    document.getElementById('new_pass').value = '';
+  } catch(e) { alert(e.message); }
+}
+
+function downloadReport() {
+  const user = Auth.getUser();
+  const token = Auth.getAccess();
+  const url = `${API_BASE}/reports/student/${user.id}/?format=pdf`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `KITI_Report_${user.id}.pdf`;
+  // Include auth via header not possible with <a>, use fetch
+  fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
+    .then(r => r.blob())
+    .then(blob => {
+      const blobUrl = URL.createObjectURL(blob);
+      a.href = blobUrl;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    }).catch(e => alert('PDF generation failed: ' + e.message));
+}
+
+// ═══════════════════════════════════════════════════════════
+// STUDENTS (Lecturer)
+// ═══════════════════════════════════════════════════════════
+async function renderStudents() {
+  try {
+    const students = await apiJSON('/accounts/students/');
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:20px;font-weight:800">Students</h2>
+      <button class="btn btn-accent" onclick="openAddStudentModal()">➕ Add Student</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Student</th><th>Reg No.</th><th>Year</th><th>Actions</th></tr></thead>
+        <tbody>
+        ${(students.results||students).map(s => `<tr>
+          <td><div style="display:flex;align-items:center;gap:10px">
+            <div class="av av-sm" style="${avStyle(s.full_name)}">${initials(s.full_name)}</div>
+            <div><div style="font-weight:600">${esc(s.full_name)}</div><div style="font-size:11px;color:var(--muted)">${esc(s.email)}</div></div>
+          </div></td>
+          <td style="font-family:var(--mono);font-size:12px">${esc(s.student_profile?.reg_number||'')}</td>
+          <td><span class="badge b-blue">Year ${s.student_profile?.year||'?'}</span></td>
+          <td><div style="display:flex;gap:5px">
+            <button class="btn btn-outline btn-xs" onclick="viewStudentActivity(${s.id},'${esc(s.full_name)}')">📊 Activity</button>
+            <button class="btn btn-xs btn-outline" onclick="openNoteModal(${s.id},'${esc(s.full_name)}')">📝 Note</button>
+            <button class="btn btn-xs btn-outline" onclick="downloadStudentReport(${s.id},'${esc(s.full_name)}')">⬇️ PDF</button>
+          </div></td>
+        </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted)">No students.</td></tr>'}
+        </tbody>
+      </table>
+    </div>`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+async function viewStudentActivity(id, name) {
+  try {
+    const report = await apiJSON(`/reports/student/${id}/?format=json`);
+    const s = report.summary;
+    showModal(`
+    <div class="modal-header"><span class="modal-title">📊 ${esc(name)}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="g3" style="margin-bottom:20px">
+        <div style="padding:14px;background:var(--bg3);border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:700;color:${gradeColor(s.avg_percentage)}">${s.avg_percentage}%</div><div style="font-size:11px;color:var(--muted)">Avg Grade</div></div>
+        <div style="padding:14px;background:var(--bg3);border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:700;color:${s.attendance_rate>=75?'var(--green)':'var(--red)'}">${s.attendance_rate}%</div><div style="font-size:11px;color:var(--muted)">Attendance</div></div>
+        <div style="padding:14px;background:var(--bg3);border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:700">${s.submissions}</div><div style="font-size:11px;color:var(--muted)">Submitted</div></div>
+      </div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px">Assignment Grades</div>
+      ${report.grades.map(g => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${esc(g.assignment)}</span><span style="font-weight:700;color:${gradeColor(g.percentage)}">${g.score}/${g.max_marks}</span></div>`).join('') || '<p style="color:var(--muted);font-size:13px">No grades.</p>'}
+      <div style="font-weight:700;font-size:13px;margin:16px 0 10px">Recent Attendance</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${report.attendance.slice(0,14).map(a => `<div style="text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:${a.status==='present'?'var(--green)':a.status==='late'?'var(--accent3)':'var(--red)'};margin:0 auto 2px"></div><div style="font-size:9px;color:var(--muted)">${a.date.slice(5)}</div></div>`).join('')}
+      </div>
+      <button class="btn btn-outline" style="width:100%;margin-top:14px" onclick="closeModal();openNoteModal(${id},'${esc(name)}')">+ Add Note</button>
+    </div>`, 'lg');
+  } catch(e) { alert(e.message); }
+}
+
+function downloadStudentReport(id, name) {
+  const token = Auth.getAccess();
+  fetch(`${API_BASE}/reports/student/${id}/?format=pdf`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  }).then(r => r.blob()).then(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `KITI_Report_${name.replace(/\s+/g,'_')}.pdf`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  }).catch(e => alert('PDF failed: ' + e.message));
+}
+
+// ═══════════════════════════════════════════════════════════
+// NOTES (Lecturer)
+// ═══════════════════════════════════════════════════════════
+async function renderNotes() {
+  try {
+    const [students, notes] = await Promise.all([
+      apiJSON('/accounts/students/'),
+      apiJSON('/assignments/notes/'),
+    ]);
+    const studList = students.results || students;
+    document.getElementById('contentArea').innerHTML = `
+    <div style="margin-bottom:20px"><h2 style="font-size:20px;font-weight:800">Student Notes & Feedback</h2></div>
+    <div class="g2-3">
+      <div class="card">
+        <div class="card-title">Post Note</div>
+        <div class="form-group"><label class="form-label">Student</label>
+          <select class="form-control" id="note_student">${studList.map(s=>`<option value="${s.id}">${esc(s.full_name)}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-control" id="note_type">
+            <option value="note">📝 General Note</option>
+            <option value="feedback">💬 Feedback</option>
+            <option value="commendation">⭐ Commendation</option>
+            <option value="warning">⚠️ Warning</option>
+            <option value="instruction">📋 Instructions</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Message</label>
+          <textarea class="form-control" id="note_content" rows="5" placeholder="Write your note, instructions, or feedback..."></textarea>
+        </div>
+        <button class="btn btn-accent" style="width:100%" onclick="postNote()">📤 Post Note</button>
+      </div>
+      <div class="card">
+        <div class="card-title">All Notes
+          <select class="form-control" id="noteFilter" onchange="filterNotesList()" style="width:auto;padding:4px 10px;font-size:12px">
+            <option value="">All Students</option>
+            ${studList.map(s=>`<option value="${s.id}">${esc(s.full_name)}</option>`).join('')}
+          </select>
+        </div>
+        <div id="notesList" style="max-height:500px;overflow-y:auto">${renderNoteItems(notes.results||notes)}</div>
+      </div>
+    </div>`;
+  } catch(e) { document.getElementById('contentArea').innerHTML = errBox(e.message); }
+}
+
+function renderNoteItems(notes) {
+  if (!notes.length) return '<div class="empty"><div class="empty-icon">💬</div><p>No notes yet.</p></div>';
+  const typeIcon = {note:'📝',feedback:'💬',commendation:'⭐',warning:'⚠️',instruction:'📋'};
+  return notes.map(n => `
+  <div style="padding:14px;background:var(--bg3);border-radius:10px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="av av-sm" style="${avStyle(n.student_name||'?')}">${initials(n.student_name||'?')}</div>
+        <div><div style="font-size:13px;font-weight:600">${esc(n.student_name||'')}</div>
+        <div style="font-size:11px;color:var(--muted)">${fmtDate(n.created_at)} · ${esc(n.author_name)}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:14px">${typeIcon[n.type]||'📝'}</span>
+        <button onclick="deleteNote(${n.id})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px">✕</button>
+      </div>
+    </div>
+    <div style="font-size:13px;line-height:1.6">${esc(n.content)}</div>
+  </div>`).join('');
+}
+
+async function filterNotesList() {
+  const studentId = document.getElementById('noteFilter').value;
+  const url = studentId ? `/assignments/notes/?student=${studentId}` : '/assignments/notes/';
+  try {
+    const notes = await apiJSON(url);
+    document.getElementById('notesList').innerHTML = renderNoteItems(notes.results||notes);
+  } catch(e) {}
+}
+
+async function postNote() {
+  const content = document.getElementById('note_content').value.trim();
+  if (!content) { alert('Message required.'); return; }
+  try {
+    await apiJSON('/assignments/notes/', {
+      method: 'POST',
+      body: JSON.stringify({
+        student:  parseInt(document.getElementById('note_student').value),
+        type:     document.getElementById('note_type').value,
+        content,
+      }),
+    });
+    document.getElementById('note_content').value = '';
+    const notes = await apiJSON('/assignments/notes/');
+    document.getElementById('notesList').innerHTML = renderNoteItems(notes.results||notes);
+  } catch(e) { alert(e.message); }
+}
+
+async function deleteNote(id) {
+  try {
+    await api(`/assignments/notes/${id}/`, { method: 'DELETE' });
+    const notes = await apiJSON('/assignments/notes/');
+    document.getElementById('notesList').innerHTML = renderNoteItems(notes.results||notes);
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════
+async function loadNotifCount() {
+  try {
+    const data = await apiJSON('/notifications/unread-count/');
+    const badge = document.getElementById('notifBadge');
+    if (data.unread > 0) { badge.textContent = data.unread; badge.style.display = 'flex'; }
+    else { badge.style.display = 'none'; }
+  } catch(e) {}
+}
+
+async function loadNotifList() {
+  try {
+    const notifs = await apiJSON('/notifications/');
+    const el = document.getElementById('notifList');
+    if (!el) return;
+    const items = notifs.results || notifs;
+    el.innerHTML = items.length ? items.slice(0,10).map(n => `
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="markNotifRead(${n.id},this)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${n.is_read?'var(--border)':'var(--accent)'};margin-top:4px;flex-shrink:0"></div>
+      <div><div style="font-size:13px;font-weight:${n.is_read?400:600}">${esc(n.title)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtDate(n.created_at)}</div></div>
+    </div>`).join('') : '<p style="color:var(--muted);font-size:13px">No notifications.</p>';
+  } catch(e) {}
+}
+
+async function markNotifRead(id, el) {
+  try {
+    await api(`/notifications/${id}/read/`, { method: 'PATCH' });
+    el.querySelector('div').style.background = 'var(--border)';
+    loadNotifCount();
+  } catch(e) {}
+}
+
+async function loadNotifications() {
+  const notifs = await apiJSON('/notifications/').catch(() => ({ results: [] }));
+  showModal(`
+  <div class="modal-header"><span class="modal-title">🔔 Notifications</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-xs btn-outline" onclick="markAllRead()">Mark All Read</button>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+  </div>
+  <div class="modal-body">
+    ${(notifs.results||notifs).map(n => `
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${n.is_read?'var(--border)':'var(--accent)'};margin-top:4px;flex-shrink:0"></div>
+      <div><div style="font-size:13px;font-weight:${n.is_read?400:600}">${esc(n.title)}</div>
+        ${n.body?`<div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(n.body)}</div>`:''}
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${fmtDate(n.created_at)}</div>
+      </div>
+    </div>`).join('') || '<p style="color:var(--muted)">No notifications.</p>'}
+  </div>`);
+  markAllRead();
+}
+
+async function markAllRead() {
+  try {
+    await apiJSON('/notifications/mark-all-read/', { method: 'POST' });
+    loadNotifCount();
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════════════════════════
+function showModal(html, size='') {
+  document.getElementById('modalRoot').innerHTML =
+    `<div class="overlay" onclick="if(event.target.classList.contains('overlay'))closeModal()">
+      <div class="modal ${size==='lg'?'modal-lg':''}">${html}</div>
+    </div>`;
+}
+function closeModal() { document.getElementById('modalRoot').innerHTML = ''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ═══════════════════════════════════════════════════════════
+// ASSIGNMENT MODALS
+// ═══════════════════════════════════════════════════════════
+function openSubmitModal(id, title, maxMarks) {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">📤 Submit: ${esc(title)}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;color:var(--accent)">Max marks: ${maxMarks}</div>
+    <div class="form-group"><label class="form-label">Your Answer / Work Description</label>
+      <textarea class="form-control" id="sub_text" rows="6" placeholder="Paste your solution, describe your work, or explain your approach..."></textarea>
+    </div>
+    <div class="form-group"><label class="form-label">Upload File (PDF, DOCX, ZIP, etc.)</label>
+      <input type="file" class="form-control" id="sub_file" accept=".pdf,.doc,.docx,.zip,.txt,.py,.html,.xlsx">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-accent" style="flex:1" onclick="submitAssignment(${id})">📤 Submit</button>
+    </div>
+  </div>`);
+}
+
+async function submitAssignment(id) {
+  const text = document.getElementById('sub_text').value.trim();
+  const file = document.getElementById('sub_file').files[0];
+  if (!text && !file) { alert('Please add your answer or upload a file.'); return; }
+
+  let fileId = null;
+  if (file) {
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('category', 'submission');
+      const uploaded = await apiJSON('/uploads/', { method: 'POST', body: fd });
+      fileId = uploaded.id;
+    } catch(e) { alert('File upload failed: ' + e.message); return; }
+  }
+
+  try {
+    const fd = new FormData();
+    fd.append('text_content', text);
+    if (file) fd.append('file', file);
+    await apiJSON(`/assignments/${id}/submit/`, { method: 'POST', body: fd });
+    closeModal();
+    alert('Assignment submitted successfully! ✅');
+    renderStudentAssignments();
+  } catch(e) { alert(e.message); }
+}
+
+function openAddAssignmentModal() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">Add Assignment</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Title</label><input class="form-control" id="a_title" placeholder="e.g. Network Topology Design"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Subject</label>
+        <select class="form-control" id="a_sub"><option>Programming</option><option>Networking</option><option>Cybersecurity</option><option>Database Management</option><option>Web Development</option><option>Cloud Computing</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Max Marks</label><input type="number" class="form-control" id="a_marks" value="100"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-control" id="a_due"></div>
+    <div class="form-group"><label class="form-label">Description / Instructions</label><textarea class="form-control" id="a_desc" rows="4"></textarea></div>
+    <div class="form-group"><label class="form-label">Attach Brief File (optional)</label><input type="file" class="form-control" id="a_file" accept=".pdf,.doc,.docx"></div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveAssignment()">Post Assignment</button>
+  </div>`);
+}
+
+async function saveAssignment() {
+  const title = document.getElementById('a_title').value.trim();
+  if (!title) { alert('Title required.'); return; }
+  const file = document.getElementById('a_file').files[0];
+  const fd = new FormData();
+  fd.append('title', title);
+  fd.append('subject', document.getElementById('a_sub').value);
+  fd.append('max_marks', document.getElementById('a_marks').value);
+  fd.append('due_date', document.getElementById('a_due').value);
+  fd.append('description', document.getElementById('a_desc').value);
+  if (file) fd.append('brief_file', file);
+  try {
+    await api('/assignments/', { method: 'POST', body: fd });
+    closeModal(); renderLecturerAssignments();
+  } catch(e) { alert(e.message); }
+}
+
+async function deleteAssignment(id) {
+  if (!confirm('Delete this assignment?')) return;
+  try { await api(`/assignments/${id}/`, { method: 'DELETE' }); renderLecturerAssignments(); }
+  catch(e) { alert(e.message); }
+}
+
+async function openGradingModal(id, title, maxMarks) {
+  try {
+    const [submissions, students] = await Promise.all([
+      apiJSON(`/assignments/${id}/submissions/`),
+      apiJSON('/accounts/students/'),
+    ]);
+    const subMap = {};
+    (submissions.results||submissions).forEach(s => { subMap[s.student] = s; });
+    showModal(`
+    <div class="modal-header"><span class="modal-title">📊 Grade: ${esc(title)}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <table>
+        <thead><tr><th>Student</th><th>Score / ${maxMarks}</th><th>Feedback</th><th></th></tr></thead>
+        <tbody>
+        ${(students.results||students).map(s => {
+          const sub = subMap[s.id];
+          return `<tr>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="av av-sm" style="${avStyle(s.full_name)}">${initials(s.full_name)}</div>${esc(s.full_name)}</div></td>
+            <td><input type="number" class="form-control" id="gs_${s.id}" value="${sub?.marks_obtained??''}" min="0" max="${maxMarks}" style="width:80px;padding:6px"></td>
+            <td><input class="form-control" id="gf_${s.id}" value="${esc(sub?.feedback||'')}" placeholder="feedback" style="font-size:12px"></td>
+            <td><button class="btn btn-accent btn-xs" onclick="saveGrade('${sub?.id||''}',${s.id},${id})">✓</button></td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>`, 'lg');
+  } catch(e) { alert(e.message); }
+}
+
+async function saveGrade(subId, studentId, assignId) {
+  const score = parseInt(document.getElementById('gs_'+studentId).value);
+  const feedback = document.getElementById('gf_'+studentId).value;
+  if (isNaN(score)) { alert('Enter a score first.'); return; }
+  try {
+    if (subId) {
+      await apiJSON(`/assignments/submissions/${subId}/grade/`, {
+        method: 'PATCH', body: JSON.stringify({ marks_obtained: score, feedback }),
+      });
+    } else {
+      // Submit on behalf then grade
+      const fd = new FormData();
+      fd.append('text_content', 'Graded by lecturer');
+      const sub = await apiJSON(`/assignments/${assignId}/submit/`, { method: 'POST', body: fd });
+      await apiJSON(`/assignments/submissions/${sub.id}/grade/`, {
+        method: 'PATCH', body: JSON.stringify({ marks_obtained: score, feedback }),
+      });
+    }
+    alert('Grade saved!');
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CLASSES MODALS
+// ═══════════════════════════════════════════════════════════
+function openAddClassModal() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">Add Online Class</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Class Name</label><input class="form-control" id="cl_name" placeholder="e.g. Data Structures"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Subject</label><input class="form-control" id="cl_sub" placeholder="Programming"></div>
+      <div class="form-group"><label class="form-label">Schedule</label><input class="form-control" id="cl_sched" placeholder="Mon & Wed 09:00"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Meeting Link</label><input class="form-control" id="cl_link" placeholder="https://meet.google.com/..."></div>
+    <div class="form-group"><label class="form-label">Status</label>
+      <select class="form-control" id="cl_status"><option value="upcoming">Upcoming</option><option value="live">Live Now</option><option value="completed">Completed</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Description / Today's Topic</label><input class="form-control" id="cl_desc" placeholder="Today: Linked Lists..."></div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveClass()">Add Class</button>
+  </div>`);
+}
+
+async function saveClass(id=null) {
+  const body = {
+    name: document.getElementById('cl_name').value.trim(),
+    subject: document.getElementById('cl_sub').value,
+    schedule: document.getElementById('cl_sched').value,
+    meeting_link: document.getElementById('cl_link').value,
+    status: document.getElementById('cl_status').value,
+    description: document.getElementById('cl_desc').value,
+  };
+  if (!body.name) { alert('Name required.'); return; }
+  try {
+    if (id) await apiJSON(`/courses/classes/${id}/`, { method: 'PATCH', body: JSON.stringify(body) });
+    else await apiJSON('/courses/classes/', { method: 'POST', body: JSON.stringify(body) });
+    closeModal(); renderClasses();
+  } catch(e) { alert(e.message); }
+}
+
+async function openEditClassModal(id) {
+  try {
+    const c = await apiJSON(`/courses/classes/${id}/`);
+    showModal(`
+    <div class="modal-header"><span class="modal-title">Edit Class</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Class Name</label><input class="form-control" id="cl_name" value="${esc(c.name)}"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Subject</label><input class="form-control" id="cl_sub" value="${esc(c.subject||'')}"></div>
+        <div class="form-group"><label class="form-label">Schedule</label><input class="form-control" id="cl_sched" value="${esc(c.schedule)}"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Meeting Link</label><input class="form-control" id="cl_link" value="${esc(c.meeting_link||'')}"></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-control" id="cl_status">
+          <option value="upcoming"${c.status==='upcoming'?' selected':''}>Upcoming</option>
+          <option value="live"${c.status==='live'?' selected':''}>Live Now</option>
+          <option value="completed"${c.status==='completed'?' selected':''}>Completed</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><input class="form-control" id="cl_desc" value="${esc(c.description||'')}"></div>
+      <button class="btn btn-accent" style="width:100%" onclick="saveClass(${id})">Save Changes</button>
+    </div>`);
+  } catch(e) { alert(e.message); }
+}
+
+async function deleteClass(id) {
+  if (!confirm('Delete this class?')) return;
+  try { await api(`/courses/classes/${id}/`, { method: 'DELETE' }); renderClasses(); }
+  catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// OTHER MODALS
+// ═══════════════════════════════════════════════════════════
+function openNoteModal(studentId, studentName) {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">📝 Note for ${esc(studentName)}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Type</label>
+      <select class="form-control" id="qnote_type">
+        <option value="note">📝 Note</option><option value="feedback">💬 Feedback</option>
+        <option value="commendation">⭐ Commendation</option><option value="warning">⚠️ Warning</option>
+        <option value="instruction">📋 Instructions</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Message</label>
+      <textarea class="form-control" id="qnote_content" rows="5" placeholder="Write your note..."></textarea>
+    </div>
+    <button class="btn btn-accent" style="width:100%" onclick="quickPostNote(${studentId})">Post Note</button>
+  </div>`);
+}
+
+async function quickPostNote(studentId) {
+  const content = document.getElementById('qnote_content').value.trim();
+  if (!content) { alert('Message required.'); return; }
+  try {
+    await apiJSON('/assignments/notes/', {
+      method: 'POST',
+      body: JSON.stringify({ student: studentId, type: document.getElementById('qnote_type').value, content }),
+    });
+    closeModal(); alert('Note posted!');
+  } catch(e) { alert(e.message); }
+}
+
+function openAddStudentModal() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">Add Student</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Full Name</label><input class="form-control" id="ns_name" placeholder="Grace Njeri"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="ns_email" placeholder="grace@kiti.ac.ke"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Reg Number</label><input class="form-control" id="ns_reg" placeholder="D0XX/ICT/2025"></div>
+      <div class="form-group"><label class="form-label">Year</label>
+        <select class="form-control" id="ns_year"><option>1</option><option>2</option><option>3</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-control" id="ns_pass" placeholder="Minimum 8 characters"></div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveStudent()">Add Student</button>
+  </div>`);
+}
+
+async function saveStudent() {
+  const name = document.getElementById('ns_name').value.trim();
+  if (!name) { alert('Name required.'); return; }
+  try {
+    await apiJSON('/accounts/register/', {
+      method: 'POST',
+      body: JSON.stringify({
+        full_name: name, email: document.getElementById('ns_email').value,
+        password: document.getElementById('ns_pass').value,
+        role: 'student', reg_number: document.getElementById('ns_reg').value,
+        year: parseInt(document.getElementById('ns_year').value),
+      }),
+    });
+    closeModal(); renderStudents();
+  } catch(e) { alert(e.message); }
+}
+
+function openAddAnnouncementModal() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">📢 Post Announcement</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Title</label><input class="form-control" id="an_title"></div>
+    <div class="form-group"><label class="form-label">Type</label>
+      <select class="form-control" id="an_type"><option value="course">Course Update</option><option value="exam">Exam Notice</option><option value="admin">Administrative</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-control" id="an_body" rows="5"></textarea></div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveAnnouncement()">Post Announcement</button>
+  </div>`);
+}
+
+async function saveAnnouncement() {
+  const title = document.getElementById('an_title').value.trim();
+  if (!title) { alert('Title required.'); return; }
+  try {
+    await apiJSON('/courses/announcements/', {
+      method: 'POST',
+      body: JSON.stringify({ title, body: document.getElementById('an_body').value, type: document.getElementById('an_type').value }),
+    });
+    closeModal(); renderLecturerDashboard();
+  } catch(e) { alert(e.message); }
+}
+
+function openAddCATModal() {
+  window._catQs = [];
+  showModal(`
+  <div class="modal-header"><span class="modal-title">Create CAT</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">CAT Title</label><input class="form-control" id="cat_title" placeholder="Programming Fundamentals CAT"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Subject</label>
+        <select class="form-control" id="cat_sub"><option>Programming</option><option>Networking</option><option>Cybersecurity</option><option>Database Management</option><option>Web Development</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Duration (mins)</label><input type="number" class="form-control" id="cat_dur" value="30"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="cat_date"></div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveCATandAddQuestions()">Create CAT & Add Questions</button>
+  </div>`);
+}
+
+async function saveCATandAddQuestions() {
+  const title = document.getElementById('cat_title').value.trim();
+  if (!title) { alert('Title required.'); return; }
+  try {
+    const cat = await apiJSON('/assessments/', {
+      method: 'POST',
+      body: JSON.stringify({
+        title, subject: document.getElementById('cat_sub').value,
+        duration_mins: parseInt(document.getElementById('cat_dur').value)||30,
+        scheduled_date: document.getElementById('cat_date').value || null,
+        status: 'draft',
+      }),
+    });
+    closeModal();
+    openAddQuestionModal(cat.id, cat.title);
+  } catch(e) { alert(e.message); }
+}
+
+function openAddQuestionModal(catId, catTitle) {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">➕ Add Question to: ${esc(catTitle)}</span><button class="modal-close" onclick="closeModal();renderLecturerCAT()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Question</label><textarea class="form-control" id="q_text" rows="3"></textarea></div>
+    ${['A','B','C','D'].map(l => `<div class="form-group"><label class="form-label">Option ${l}</label><input class="form-control" id="q_opt${l}" placeholder="Option ${l}"></div>`).join('')}
+    <div class="form-group"><label class="form-label">Correct Answer</label>
+      <select class="form-control" id="q_ans"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal();renderLecturerCAT()">Done</button>
+      <button class="btn btn-accent" style="flex:1" onclick="saveQuestion(${catId},'${esc(catTitle)}')">Save & Add Another</button>
+    </div>
+  </div>`);
+}
+
+async function saveQuestion(catId, catTitle) {
+  const text = document.getElementById('q_text').value.trim();
+  if (!text) { alert('Question text required.'); return; }
+  try {
+    await apiJSON(`/assessments/${catId}/questions/`, {
+      method: 'POST',
+      body: JSON.stringify({
+        text, cat: catId,
+        option_a: document.getElementById('q_optA').value,
+        option_b: document.getElementById('q_optB').value,
+        option_c: document.getElementById('q_optC').value,
+        option_d: document.getElementById('q_optD').value,
+        correct_ans: document.getElementById('q_ans').value,
+        order: 0,
+      }),
+    });
+    alert('Question saved! Add another or close.');
+    openAddQuestionModal(catId, catTitle);
+  } catch(e) { alert(e.message); }
+}
+
+function openCreateRoomModal() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">Create Room</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Room Name</label><input class="form-control" id="rm_name" placeholder="e.g. Final Year Study Group"></div>
+    <div class="form-group"><label class="form-label">Type</label>
+      <select class="form-control" id="rm_type"><option value="study">Study Group</option><option value="class">Class Room</option><option value="codespace">CodeSpace</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Icon</label>
+      <select class="form-control" id="rm_icon"><option value="💬">💬 Chat</option><option value="🐍">🐍 Python</option><option value="📊">📊 Data</option><option value="🔐">🔐 Security</option><option value="🌐">🌐 Web</option></select>
+    </div>
+    <button class="btn btn-accent" style="width:100%" onclick="createRoom()">Create Room</button>
+  </div>`);
+}
+
+async function createRoom() {
+  const name = document.getElementById('rm_name').value.trim();
+  if (!name) { alert('Name required.'); return; }
+  try {
+    await apiJSON('/collaboration/rooms/', {
+      method: 'POST',
+      body: JSON.stringify({ name, type: document.getElementById('rm_type').value, icon: document.getElementById('rm_icon').value }),
+    });
+    closeModal(); renderCollaborate();
+  } catch(e) { alert(e.message); }
+}
+
+function openUploadPaperModal() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">📤 Upload Revision Paper</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Title</label><input class="form-control" id="rp_title" placeholder="KNEC Diploma ICT – Nov 2024"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Subject</label><input class="form-control" id="rp_sub" placeholder="ICT Theory"></div>
+      <div class="form-group"><label class="form-label">Year</label><input type="number" class="form-control" id="rp_year" value="2024"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Paper</label><input class="form-control" id="rp_paper" placeholder="Paper 1"></div>
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-control" id="rp_type"><option value="knec">KNEC Paper</option><option value="notes">Study Notes</option><option value="practice">Practice</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Upload File (PDF)</label><input type="file" class="form-control" id="rp_file" accept=".pdf,.doc,.docx"></div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveRevisionPaper()">Upload Paper</button>
+  </div>`);
+}
+
+async function saveRevisionPaper() {
+  const title = document.getElementById('rp_title').value.trim();
+  if (!title) { alert('Title required.'); return; }
+  const file = document.getElementById('rp_file').files[0];
+  const fd = new FormData();
+  fd.append('title', title);
+  fd.append('subject', document.getElementById('rp_sub').value);
+  fd.append('year', document.getElementById('rp_year').value);
+  fd.append('paper', document.getElementById('rp_paper').value);
+  fd.append('type', document.getElementById('rp_type').value);
+  if (file) fd.append('file', file);
+  try {
+    await api('/courses/revision-papers/', { method: 'POST', body: fd });
+    closeModal(); renderRevision();
+  } catch(e) { alert(e.message); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// FORGOT PASSWORD
+// ═══════════════════════════════════════════════════════════
+function showForgotPassword() {
+  showModal(`
+  <div class="modal-header"><span class="modal-title">🔐 Reset Password</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div class="modal-body">
+    <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Enter your email and we'll send a reset link.</p>
+    <div id="resetAlert" class="alert-box alert-error"></div>
+    <div id="resetSuccess" class="alert-box alert-success"></div>
+    <div class="form-group"><label class="form-label">Email Address</label>
+      <input class="form-control" id="reset_email" type="email" placeholder="alice@kiti.ac.ke">
+    </div>
+    <button class="btn btn-accent" style="width:100%" onclick="requestReset()">Send Reset Link</button>
+  </div>`);
+}
+
+async function requestReset() {
+  const email = document.getElementById('reset_email').value.trim();
+  if (!email) { showAlert(document.getElementById('resetAlert'), 'Email required.'); return; }
+  try {
+    const res = await fetch(`${API_BASE}/auth/password-reset/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    document.getElementById('resetAlert').style.display = 'none';
+    const s = document.getElementById('resetSuccess');
+    s.textContent = data.detail;
+    s.style.display = 'block';
+  } catch(e) {
+    showAlert(document.getElementById('resetAlert'), 'Request failed. Try again.');
+  }
+}
+</script>
+</body>
+</html>
