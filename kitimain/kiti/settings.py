@@ -126,7 +126,7 @@ CORS_ALLOWED_ORIGINS = config(
     cast=Csv()
 )
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = DEBUG   # allow all in dev
+CORS_ALLOW_ALL_ORIGINS = True     # allow all in dev
 
 # ── Static & Media ────────────────────────────────────────────
 STATIC_URL  = '/static/'
